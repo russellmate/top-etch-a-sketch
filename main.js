@@ -1,58 +1,70 @@
 const container = document.querySelector('.grid-container');
 
-const randColor = () => {
-	return (
-		'#' +
-		Math.floor(Math.random() * 16777215)
-			.toString(16)
-			.padStart(6, '0')
-			.toUpperCase()
-	);
-};
-
-function grid() {
-	let userChoice = prompt('Choose grid size: (max input 100)');
-	parseInt(userChoice);
-	if (userChoice > 100) {
-		alert(
-			'Cannot have over 100 x 100 squares! Please enter a number below 100.'
-		);
-		setTimeout('location.reload(true);', 1);
-	} else {
-		document.documentElement.style.setProperty('--columns-row', userChoice);
-		for (i = 0; i < userChoice ** 2; i++) {
-			const gridSquare = document.createElement('div');
-			gridSquare.textContent = '';
-			gridSquare.classList.add('grid-square');
-			document
-				.getElementById('standard')
-				.addEventListener('click', function () {
-					gridSquare.addEventListener('mouseover', function () {
-						gridSquare.setAttribute(
-							'style',
-							'background-color: white;'
-						);
-					});
-				});
-			document
-				.getElementById('random')
-				.addEventListener('click', function () {
-					gridSquare.addEventListener('mouseover', function () {
-						gridSquare.style.setProperty(
-							'background-color',
-							randColor()
-						);
-					});
-				});
-			container.appendChild(gridSquare);
-		}
-	}
+let userChoice = prompt('Enter grid size (1 - 100): ');
+if (userChoice < 1 || userChoice > 100) {
+	prompt('Please enter a valid number (1 - 100): ');
+	12;
+} else {
+	userChoice = userChoice;
 }
 
-grid();
+let gridSize = userChoice * userChoice;
+for (let i = 0; i < gridSize; i++) {
+	let square = document.createElement('div');
+	square.classList.add('grid-square');
+	container.style.gridTemplateRows = `repeat(${userChoice}, 1fr)`;
+	container.style.gridTemplateColumns = `repeat(${userChoice}, 1fr)`;
+	container.appendChild(square);
+}
 
-const reset = document.getElementById('reset');
+let squares = document.querySelectorAll('.grid-square');
 
-reset.onclick = function () {
-	window.location.reload();
-};
+const random = document
+	.querySelector('#random')
+	.addEventListener('click', () => {
+		squares.forEach(square => {
+			const randomColor = Math.floor(Math.random() * 16777215).toString(
+				16
+			);
+			square.addEventListener(
+				'mouseover',
+				() => (square.style.backgroundColor = '#' + randomColor)
+			);
+		});
+	});
+
+const standard = document
+	.querySelector('#standard')
+	.addEventListener('click', () => {
+		squares.forEach(square => {
+			square.addEventListener(
+				'mouseover',
+				() => (square.style.backgroundColor = 'black')
+			);
+		});
+	});
+
+const eraser = document
+	.querySelector('#eraser')
+	.addEventListener('click', () => {
+		squares.forEach(square => {
+			square.addEventListener(
+				'mouseover',
+				() => (square.style.backgroundColor = 'rgb(230, 203, 176)')
+			);
+		});
+	});
+
+const reset = document.querySelector('#reset').addEventListener('click', () => {
+	const clear = prompt(
+		'Type "New" to start a new grid. Type "Clear" to clear the current grid.'
+	);
+	const confirmClear = clear.toLowerCase();
+	if (confirmClear === 'new') {
+		window.location.reload();
+	} else if (confirmClear === 'clear') {
+		squares.forEach(square => {
+			square.style.backgroundColor = 'rgb(230, 203, 176)';
+		});
+	}
+});
